@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -15,16 +16,55 @@ class _SignupScreenState extends State<SignupScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
+  Future<void> signUpWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Google Sign-Up failed. Please try again.')),
+      );
+    }
+  }
+
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Need Help?'),
+          content: Text(
+              'For assistance, please contact support at support-ph@nittiv.com.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Sign Up',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: Text('Sign Up'),
         backgroundColor: Color(0xFF008575),
       ),
       body: SingleChildScrollView(
@@ -34,9 +74,12 @@ class _SignupScreenState extends State<SignupScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Image.asset('assets/logos/nittiv_logoColoredText.png',
-                  alignment: Alignment.topLeft, height: 30),
-              SizedBox(height: 10),
+              Image.asset(
+                'assets/logos/nittiv_logoColoredText.png',
+                alignment: Alignment.topLeft,
+                height: 30,
+              ),
+              SizedBox(height: 20),
               Text(
                 'JOIN NITTIV',
                 style: TextStyle(
@@ -117,6 +160,17 @@ class _SignupScreenState extends State<SignupScreen> {
                   return null;
                 },
               ),
+              SizedBox(height: 16),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _showHelpDialog,
+                  child: Text(
+                    'Need Help?',
+                    style: TextStyle(color: Color(0xFF008575)),
+                  ),
+                ),
+              ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
@@ -138,10 +192,29 @@ class _SignupScreenState extends State<SignupScreen> {
                     }
                   }
                 },
-                child: Text('Register'),
+                child: Text(
+                  'REGISTER',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF008575),
                   padding: EdgeInsets.symmetric(vertical: 16),
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: signUpWithGoogle,
+                icon: Image.asset('assets/logos/google.png', height: 24),
+                label: Text('Sign up with Google'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  side: BorderSide(color: Colors.grey),
+                  padding: EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
               SizedBox(height: 10),

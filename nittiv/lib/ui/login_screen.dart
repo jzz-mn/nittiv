@@ -39,6 +39,28 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Need Help?'),
+          content: Text(
+            'If you have any questions or need assistance, please reach out to our support team at support-ph@nittiv.com. We\'re here to help!',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,11 +125,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {
-                      // Implement forgot password functionality
-                    },
+                    onPressed: _showHelpDialog,
                     child: Text(
-                      'Forgot Password',
+                      'Need Help?',
                       style: TextStyle(color: Color(0xFF008575)),
                     ),
                   ),
