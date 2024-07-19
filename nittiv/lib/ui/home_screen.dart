@@ -10,10 +10,16 @@ class HomeScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {
-            // Implement menu functionality
+            Scaffold.of(context).openDrawer();
           },
         ),
-        title: Text('Home'),
+        title: Text(
+          'Home',
+          style: TextStyle(
+            color: Color(0xFF008575),
+            fontWeight: FontWeight.w200,
+          ),
+        ),
         actions: [
           CircleAvatar(
             backgroundImage: AssetImage('assets/profile_image.jpg'),
@@ -100,6 +106,10 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Color(0xFF008575),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(0.6),
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),

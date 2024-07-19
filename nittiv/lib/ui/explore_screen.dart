@@ -27,7 +27,6 @@ class ExploreScreen extends StatelessWidget {
           ),
           SizedBox(width: 10),
         ],
-        backgroundColor: Color(0xFF008575),
       ),
       body: Column(
         children: [

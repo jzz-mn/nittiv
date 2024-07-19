@@ -19,7 +19,12 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        title: Text(
+          'Sign Up',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Color(0xFF008575),
       ),
       body: SingleChildScrollView(
@@ -30,8 +35,8 @@ class _SignupScreenState extends State<SignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Image.asset('assets/logos/nittiv_logoColoredText.png',
-                  height: 100),
-              SizedBox(height: 20),
+                  alignment: Alignment.topLeft, height: 30),
+              SizedBox(height: 10),
               Text(
                 'JOIN NITTIV',
                 style: TextStyle(

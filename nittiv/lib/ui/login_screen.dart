@@ -51,14 +51,14 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Image.asset('assets/logos/nittiv_logoColoredText.png',
-                    height: 100),
-                SizedBox(height: 20),
+                    alignment: Alignment.topLeft, height: 30),
+                SizedBox(height: 10),
                 Text(
                   'WELCOME BACK!',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     color: Color(0xFF008575),
                   ),
                 ),
@@ -132,7 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     }
                   },
-                  child: Text('LOGIN'),
+                  child: Text(
+                    'LOGIN',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF008575),
                     padding: EdgeInsets.symmetric(vertical: 16),
