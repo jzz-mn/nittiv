@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'place_details_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'settings_screen.dart';
 
 class ExploreScreen extends StatelessWidget {
   @override
@@ -9,7 +11,7 @@ class ExploreScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.menu),
           onPressed: () {
-            // Implement menu functionality
+            Scaffold.of(context).openDrawer();
           },
         ),
         title: Text('Explore'),
@@ -27,6 +29,42 @@ class ExploreScreen extends StatelessWidget {
           ),
           SizedBox(width: 10),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFF008575),
+              ),
+              child: Text(
+                'Settings',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Sign Out'),
+              onTap: () {
+                // Implement sign-out functionality
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
@@ -55,19 +93,35 @@ class ExploreScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              padding: EdgeInsets.all(16),
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              children: [
-                _buildPlaceCard(context, 'Lorem Ipsum', 'assets/place1.jpg'),
-                _buildPlaceCard(context, 'Lorem Ipsum', 'assets/place2.jpg'),
-                _buildPlaceCard(context, 'Lorem Ipsum', 'assets/place3.jpg'),
-                _buildPlaceCard(context, 'Lorem Ipsum', 'assets/place4.jpg'),
-                _buildPlaceCard(context, 'Lorem Ipsum', 'assets/place5.jpg'),
-                _buildPlaceCard(context, 'Lorem Ipsum', 'assets/place6.jpg'),
-              ],
+            child: StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('places').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                final places = snapshot.data!.docs;
+
+                return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.8,
+                  ),
+                  padding: EdgeInsets.all(16),
+                  itemCount: places.length,
+                  itemBuilder: (context, index) {
+                    final place = places[index];
+                    return _buildPlaceCard(
+                      context,
+                      place['placeName'],
+                      place['placePhoto'],
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -86,7 +140,23 @@ class ExploreScreen extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         onTap: (index) {
-          // Implement navigation
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/explore');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/saved');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/journal');
+              break;
+            case 4:
+              Navigator.pushReplacementNamed(context, '/profile');
+              break;
+          }
         },
       ),
     );
@@ -102,14 +172,16 @@ class ExploreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceCard(BuildContext context, String name, String imagePath) {
+  Widget _buildPlaceCard(BuildContext context, String name, String imageUrl) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                PlaceDetailsScreen(placeName: name, imagePath: imagePath),
+            builder: (context) => PlaceDetailsScreen(
+              placeName: name,
+              imagePath: imageUrl,
+            ),
           ),
         );
       },
@@ -117,7 +189,7 @@ class ExploreScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           image: DecorationImage(
-            image: AssetImage(imagePath),
+            image: NetworkImage(imageUrl),
             fit: BoxFit.cover,
           ),
         ),

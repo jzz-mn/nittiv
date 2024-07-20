@@ -17,7 +17,7 @@ class PlaceDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
+            Image.network(
               imagePath,
               width: double.infinity,
               height: 200,
