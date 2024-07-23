@@ -64,7 +64,7 @@ class PlaceDetailsScreen extends StatelessWidget {
                     onPressed: () {
                       // Implement booking functionality
                     },
-                    child: Text('Book Now'),
+                    child: Text('SAVE'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF008575),
                       padding:

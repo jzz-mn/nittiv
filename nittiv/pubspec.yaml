@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.2.3
   intl: ^0.19.0
   cloud_firestore: ^5.1.0
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:
@@ -75,7 +76,13 @@ flutter:
      - assets/logos/nittiv_logoColoredText.png
      - assets/logos/nittiv_logoWhiteText.png
      - assets/logos/nittiv_whiteLogo.png
-
+     - assets/place_info.json
+     - assets/places/vigan.jpg
+     - assets/places/callao.jpg
+     - assets/places/paoay.jpg
+     - assets/places/batanes.jpg
+     - assets/places/palaui.jpg
+     - assets/places/pagudpud.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
