@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'place_details_screen.dart';
 import 'settings_screen.dart';
-import 'loading_screen.dart'; // Make sure to import your LoadingScreen
+import 'loading_screen.dart';
+// Make sure to import your LoadingScreen
 
 class ExploreScreen extends StatefulWidget {
   @override

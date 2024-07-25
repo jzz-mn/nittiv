@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'place_details_screen.dart';
 import 'settings_screen.dart';
+import 'saved_places_manager.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 class SavedScreen extends StatefulWidget {
   @override
@@ -8,11 +11,31 @@ class SavedScreen extends StatefulWidget {
 }
 
 class _SavedScreenState extends State<SavedScreen> {
-  final List<Map<String, String>> _savedPlaces = [];
+  List<Map<String, dynamic>> _savedPlaces = [];
 
-  void _addSavedPlace(String name, String imagePath) {
+  @override
+  void initState() {
+    super.initState();
+    loadSavedPlaces();
+  }
+
+  Future<void> loadSavedPlaces() async {
+    final savedPlaceNames = await SavedPlacesManager.getSavedPlaces();
+    final String response =
+        await rootBundle.loadString('assets/place_info.json');
+    final data = await json.decode(response);
+
+    List<Map<String, dynamic>> loadedPlaces = [];
+    for (var region in data) {
+      for (var place in region['places']) {
+        if (savedPlaceNames.contains(place['name'])) {
+          loadedPlaces.add(place);
+        }
+      }
+    }
+
     setState(() {
-      _savedPlaces.add({'name': name, 'imagePath': imagePath});
+      _savedPlaces = loadedPlaces;
     });
   }
 
@@ -103,22 +126,24 @@ class _SavedScreenState extends State<SavedScreen> {
                 final place = _savedPlaces[index];
                 return ListTile(
                   leading: Image.asset(
-                    place['imagePath']!,
+                    place['imagePath'],
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  title: Text(place['name']!),
+                  title: Text(place['name']),
+                  subtitle: Text(place['location']),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => PlaceDetailsScreen(
-                          placeName: place['name']!,
-                          imagePath: place['imagePath']!,
+                          placeName: place['name'],
+                          imagePath: place['imagePath'],
                         ),
                       ),
-                    );
+                    ).then((_) =>
+                        loadSavedPlaces()); // Reload saved places when returning from details screen
                   },
                 );
               },

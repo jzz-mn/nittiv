@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
+import 'saved_places_manager.dart';
 
 class PlaceDetailsScreen extends StatefulWidget {
   final String placeName;
@@ -12,82 +15,148 @@ class PlaceDetailsScreen extends StatefulWidget {
 
 class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
   bool isSaved = false;
+  Map<String, dynamic>? placeInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    loadPlaceInfo();
+    checkIfSaved();
+  }
+
+  Future<void> loadPlaceInfo() async {
+    try {
+      final String response =
+          await rootBundle.loadString('assets/place_info.json');
+      final data = json.decode(response) as List;
+      setState(() {
+        placeInfo = data.expand((region) => region['places']).firstWhere(
+            (place) => place['name'] == widget.placeName,
+            orElse: () => null);
+      });
+      print('Place info loaded: $placeInfo');
+    } catch (e) {
+      print('Error loading place info: $e');
+    }
+  }
+
+  Future<void> checkIfSaved() async {
+    final savedPlaces = await SavedPlacesManager.getSavedPlaces();
+    setState(() {
+      isSaved = savedPlaces.contains(widget.placeName);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 200.0,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(widget.placeName),
-              background: Image.network(
-                widget.imagePath,
-                fit: BoxFit.cover,
-              ),
-            ),
-            backgroundColor: Color(0xFF008575),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: placeInfo == null
+          ? Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.location_on, color: Color(0xFF008575)),
-                          SizedBox(width: 4),
-                          Text('Location, Country'),
-                        ],
-                      ),
-                      _buildSaveButton(),
-                    ],
-                  ),
+                  CircularProgressIndicator(),
                   SizedBox(height: 16),
-                  Text(
-                    'About',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Discover the beauty of ${widget.placeName}! This eco-friendly destination offers a perfect blend of natural wonders and sustainable practices.',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Eco-friendly Features',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  _buildFeature('100% Renewable Energy', Icons.eco),
-                  _buildFeature('Zero-Waste Policy', Icons.delete_outline),
-                  _buildFeature('Local Community Projects', Icons.people),
-                  SizedBox(height: 16),
-                  _buildInfoCard('Best Time to Visit', 'April to October'),
-                  _buildInfoCard('Eco-Rating', '9.5/10'),
+                  Text('Loading place information...'),
                 ],
               ),
+            )
+          : CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 300,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(placeInfo!['imagePath']),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.placeName,
+                          style: TextStyle(
+                              fontSize: 28, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.location_on,
+                                    color: Color(0xFF008575)),
+                                SizedBox(width: 4),
+                                Text(placeInfo!['location']),
+                              ],
+                            ),
+                            _buildSaveButton(),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'About',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          placeInfo!['description'],
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          'Highlight',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          placeInfo!['highlight'],
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(height: 16),
+                        _buildInfoCard('Best Time to Visit',
+                            placeInfo!['recommendedVisitTime']),
+                        SizedBox(height: 8),
+                        _buildInfoCard(
+                            'Traveler Tips', placeInfo!['travelerTips']),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
   Widget _buildSaveButton() {
     return ElevatedButton.icon(
-      onPressed: () {
+      onPressed: () async {
         setState(() {
           isSaved = !isSaved;
         });
-        // TODO: Implement save functionality
+        if (isSaved) {
+          await SavedPlacesManager.savePlace(widget.placeName);
+        } else {
+          await SavedPlacesManager.removePlace(widget.placeName);
+        }
       },
       icon: Icon(isSaved ? Icons.favorite : Icons.favorite_border,
           color: Colors.white),
@@ -96,19 +165,6 @@ class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Color(0xFF008575),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-    );
-  }
-
-  Widget _buildFeature(String feature, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(icon, color: Color(0xFF008575)),
-          SizedBox(width: 12),
-          Text(feature, style: TextStyle(fontSize: 16)),
-        ],
       ),
     );
   }
