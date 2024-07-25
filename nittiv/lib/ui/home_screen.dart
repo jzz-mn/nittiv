@@ -47,18 +47,39 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text(
                 'Home',
                 style: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
+                  color: Color(0xFF008575),
                   fontWeight: FontWeight.w200,
                 ),
               ),
               actions: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Hello,',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF008575),
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      Text(
+                        'Alexandra',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF008575),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 10),
                 CircleAvatar(
                   backgroundImage: AssetImage('assets/profile_image.jpg'),
                 ),
-                SizedBox(width: 10),
-                Center(
-                    child:
-                        Text('Hello,\nAlexandra', textAlign: TextAlign.right)),
                 SizedBox(width: 10),
               ],
             )
@@ -196,138 +217,105 @@ class HomeContent extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Container(
-              height: 200,
-              child: FutureBuilder<List<dynamic>>(
-                future: _loadPlaceData(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: snapshot.data![0]['places'].length,
-                      itemBuilder: (context, index) {
-                        var place = snapshot.data![0]['places'][index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PlaceDetailsScreen(
-                                  placeName: place['name'],
-                                  imagePath: place['imagePath'],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 150,
-                            margin: EdgeInsets.only(right: 15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                    place['imagePath'],
-                                    height: 120,
-                                    width: 150,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  place['name'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  place['description'],
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error loading data');
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              ),
-            ),
+            _buildPlacesList(0),
             SizedBox(height: 30),
             Text(
               'Suggested for You',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Container(
-              height: 200,
-              child: FutureBuilder<List<dynamic>>(
-                future: _loadPlaceData(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: snapshot.data![1]['places'].length,
-                      itemBuilder: (context, index) {
-                        var place = snapshot.data![1]['places'][index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PlaceDetailsScreen(
-                                  placeName: place['name'],
-                                  imagePath: place['imagePath'],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 150,
-                            margin: EdgeInsets.only(right: 15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.asset(
-                                    place['imagePath'],
-                                    height: 120,
-                                    width: 150,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  place['name'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  place['description'],
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error loading data');
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              ),
-            ),
+            _buildPlacesList(1),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlacesList(int categoryIndex) {
+    return Container(
+      height: 200,
+      child: FutureBuilder<List<dynamic>>(
+        future: _loadPlaceData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: snapshot.data![categoryIndex]['places'].length,
+              itemBuilder: (context, index) {
+                var place = snapshot.data![categoryIndex]['places'][index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlaceDetailsScreen(
+                          placeName: place['name'],
+                          imagePath: place['imagePath'],
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 150,
+                    margin: EdgeInsets.only(right: 15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.teal[300]!, width: 2),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
+                          child: Image.asset(
+                            place['imagePath'],
+                            height: 120,
+                            width: 150,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                place['name'],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                place['location'],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error loading data');
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
       ),
     );
   }

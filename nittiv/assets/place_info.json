@@ -21,7 +21,7 @@
         "recommendedVisitTime": "Anytime during the day.",
         "travelerTips": "Dress modestly as it is a place of worship. Nearby is the Malacañang of the North, a former presidential museum.",
         "imagePath": "assets/places/paoay.jpg"
-    },
+      },
       {
         "name": "Pagudpud Beaches",
         "description": "Pagudpud is famous for its pristine beaches and clear blue waters, often referred to as the 'Boracay of the North.'",
@@ -46,8 +46,7 @@
         "recommendedVisitTime": "It's best to visit the Callao Cave in the summer months (March to May) as there are fewer chances of rain during these months, which also lessens that chance of the cave closing due to strong rains.",
         "travelerTips": "Wear comfortable shoes as there are many steps to climb.",
         "imagePath": "assets/places/callao.jpg"
-      
-    },
+      },
       {
         "name": "Batanes Islands",
         "description": "A group of islands known for its rolling hills, traditional stone houses, and stunning seascapes. It is known for its scenic waters and terrain and clean environment.",
@@ -57,8 +56,7 @@
         "recommendedVisitTime": "March to June for calmer weather.",
         "travelerTips": "Book flights and accommodations in advance due to limited availability. Respect local customs.",
         "imagePath": "assets/places/batanes.jpg"
-      
-    },
+      },
       {
         "name": "Palaui Island",
         "description": "The island is the tenth entry in CNN's World's 100 Best Beaches list which was published on May 13, which remarked the island's 'raw beauty.' On June 22, 2018, the Palaui Island Protected Landscape and Seascape was designated a national park through the Expanded National Integrated Protected Areas System (ENIPAS) Act or Republic Act No. 11038. In January 2019, the island won the Association of Southeast Asian Nations (ASEAN) Community-Based Tourism Award for 2019-2021 'for promoting sustainable tourism through the efforts of the island’s environmental group, the Palaui Environmental Protectors Association (PEPA).'",
@@ -67,8 +65,78 @@
         "highlight": "Cape Engaño Lighthouse and the island’s diverse flora and fauna.",
         "recommendedVisitTime": "Dry season (November to May) for better travel conditions.",
         "travelerTips": "When swimming and snorkeling, it's important to wear a rashguard and aqua shoes to avoid being stung by sea urchins, jellyfish, or stonefish. Be mindful not to step on or touch corals while snorkeling to protect these delicate ecosystems. Always dispose of your trash properly and refrain from collecting plants or sand as souvenirs. Additionally, remember to bring mosquito repellent and any personal medicines you might need to ensure a comfortable and safe visit.",
-        "imagePath": "assets/places/palaui.jpg"    
-        }
+        "imagePath": "assets/places/palaui.jpg"
+      }
+    ]
+  },
+  {
+    "region": "Region III - Central Luzon",
+    "places": [
+      {
+        "name": "Mount Pinatubo",
+        "description": "Mount Pinatubo is a popular attraction in the Philippines. For centuries, this historic site lay dormant. Only the second-largest terrestrial volcanic eruption of the 20th century took place there. What made it most cataclysmic was right as Pinatubo was spewing 10 billion tons of ash and rocks, an incoming typhoon triggered lahar, a violent mudflow that swept the plains just 600 meters below the volcano.",
+        "location": "Zambales/Pampanga, Philippines.",
+        "coordinates": "15.1428° N, 120.3493° E",
+        "highlight": "The modern Pinatubo is a dome complex and stratovolcano made of dacite and andesite. This complex is surrounded by pyroclastic flow and lahar deposits from large explosive eruptions.",
+        "recommendedVisitTime": "It is best to marvel at and experience the beauty of Mt. Pinatubo on dry and summer season from December to May.",
+        "travelerTips": "Wear sturdy footwear and bring sun protection. Guided tours are recommended.",
+        "imagePath": "assets/places/pinatubo.jpg"
+      },
+      {
+        "name": "Subic Bay",
+        "description": "Subic is a seaside area on the west side of Luzon Island in Zambales Province in the Subic Bay region. Subic Bay is a former US naval base that was converted into a beach town in the greater proximity of Manila. The main industry is the free port and the airport which is used by transport companies.",
+        "location": "Subic, Zambales, Philippines.",
+        "coordinates": "14.8260° N, 120.2842° E",
+        "highlight": "Duty-free shopping, water sports, and wildlife interaction.",
+        "recommendedVisitTime": "The best time for diving in Subic Bay is during the dry season, less currents and on average better visibility, yet diving can be experienced all year around due to its somewhat protected geographical location, enclosed by land Subic Bay offers calm protected waters under all but the absolute worst weather conditions.",
+        "travelerTips": "Explore Ocean Adventure, Zoobic Safari, and the nearby beaches.",
+        "imagePath": "assets/places/subic.jpg"
+      },
+      {
+        "name": "Nayong Pilipino",
+        "description": "Nayong Pilipino is a cultural and heritage theme park located at the Clark Field, Pampanga, occupying the site of Clark Expo (formerly known as Expo Filipino). The park is home to replicas and miniatures of the country's top tourist destinations and indigenous villages that represent the Philippines’ geography and culture.",
+        "location": "Clark Freeport Zone, Pampanga, Philippines.",
+        "coordinates": "15.1860° N, 120.5386° E",
+        "highlight": "This 45-acre amusement park features replicas of the country's most popular icons: Bohol's Chocolate Hills, Cebu's Magellan's Cross, an old Spanish colonial plaza, Jose Rizal's home, a Kalinga village, and many more!",
+        "recommendedVisitTime": "As an open-air park, it is best to schedule a visit to Nayong Pilipino Clark in the dry but cool months, which are usually from late November to the end of February.",
+        "travelerTips": "Ideal for families and educational trips. Wear comfortable walking shoes.",
+        "imagePath": "assets/places/nayong.JPG"
+      }
+    ]
+  },
+  {
+    "region": "Region IV-A - CALABARZON",
+    "places": [
+      {
+        "name": "Taal Volcano",
+        "description": "Taal Volcano is a large caldera in Batangas that was formed by prehistoric eruptions. In the wake of the eruptions, it was eventually filled by Taal Lake. Throughout history it has erupted about 38 times, making it the second most active volcano in the Philippines. While it is usually known to only have one crater, the volcano is actually a complex volcano system that consists of 47 volcanic craters. Its most popular crater is the Binintiang Malaki cone on the volcano's northwestern tip.",
+        "location": "Batangas, Philippines.",
+        "coordinates": "14.0004° N, 120.9976° E",
+        "highlight": "The unique “volcano within a lake within a volcano” setup.",
+        "recommendedVisitTime": "The best time to visit the island is from late December to late May as there are fewer chances of rainfall during these months.",
+        "travelerTips": "Hire a guide for the trek. Be prepared for sudden changes in weather. Make sure to double-check with the local government units and tourism office before your planned trip to confirm if the volcano is safe to visit as it is still considered active.",
+        "imagePath": "assets/places/taal.jpg"
+      },
+      {
+        "name": "Pagsanjan Falls",
+        "description": "Pagsanjan Falls is a renowned Laguna tourist destination and one of the country's most iconic waterfalls. Magdapio Falls was the original name. Pagsanjan Falls is a large and strong waterfall that stands over 300 feet tall (9.44 meters). It has three levels and a large water basin. Pagsanjan, like the other waterfalls on this list, is surrounded by granite boulders and lush greenery, with mountains in the background.",
+        "location": "Laguna, Philippines.",
+        "coordinates": "14.2714° N, 121.4907° E",
+        "highlight": "Manoeuvring the small, narrow boat through 14 river rapids downstream, also known as shooting the rapids.",
+        "recommendedVisitTime": "Visit during the summer months of March to June to avoid rainy season.",
+        "travelerTips": "Bring cash, waterproof bag for personal items, water, sunscreen, hat (that can fit under a helmet) and rash guard. And please tip your rafters.",
+        "imagePath": "assets/places/pagsanjan.jpg"
+      },
+      {
+        "name": "Enchanted Kingdom",
+        "description": "Enchanted Kingdom opened to the public on October 19, 1995. The theme park boasts of rides and attractions unique to the country in size and magnitude. These rides and attractions are located within seven meticulously themed zones interspersed with food and merchandise outlets and kiosks as well as various game stands that add to the “enchanting experience”, away from the day-to-day realities of life.",
+        "location": "Santa Rosa, Laguna, Philippines.",
+        "coordinates": "14.2837° N, 121.1028° E",
+        "highlight": "First and only world-class theme park in the country.",
+        "recommendedVisitTime": "It is best to choose to go during lean season or, if open, weekdays. But if you can’t help visiting during the holidays and peak season, you might want to consider these: Plan your visit well. List the rides that you don’t want to miss and rank them. Prioritize the popular ones. Go to the park early, so you will have more time. Moreover, you can go through your list and start ticking off your priority rides while it’s still early and there’s not too much crowd yet. Have your meals elsewhere. Have them before or after your visit so you won’t waste time falling in line for proper meals. Just have snacks inside the park. If you can’t help it, then have lunch or dinner outside the peak dining hours.",
+        "travelerTips": "Wear comfortable footwear. You will be doing a lot of standing, walking, and waiting in line. Bring extra clothes.",
+        "imagePath": "assets/places/ek.jpg"
+      }
     ]
   }
 ]

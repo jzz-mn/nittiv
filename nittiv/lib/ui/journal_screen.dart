@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Add this import statement
+import 'package:intl/intl.dart';
 import 'settings_screen.dart';
 
 class JournalScreen extends StatefulWidget {
@@ -37,12 +37,6 @@ class _JournalScreenState extends State<JournalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-        ),
         title: Text(
           'Journal',
           style: TextStyle(
@@ -50,6 +44,37 @@ class _JournalScreenState extends State<JournalScreen> {
             fontWeight: FontWeight.w200,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Hello,',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF008575),
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                Text(
+                  'Alexandra',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFF008575),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 10),
+          CircleAvatar(
+            backgroundImage: AssetImage('assets/profile_image.jpg'),
+          ),
+          SizedBox(width: 10),
+        ],
       ),
       drawer: Drawer(
         child: ListView(

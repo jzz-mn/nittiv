@@ -11,12 +11,6 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-        ),
         title: Text(
           'Profile',
           style: TextStyle(
@@ -24,6 +18,37 @@ class ProfileScreen extends StatelessWidget {
             fontWeight: FontWeight.w200,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Hello,',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF008575),
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                Text(
+                  'Alexandra',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFF008575),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(width: 10),
+          CircleAvatar(
+            backgroundImage: AssetImage('assets/profile_image.jpg'),
+          ),
+          SizedBox(width: 10),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
