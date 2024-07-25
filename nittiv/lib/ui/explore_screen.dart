@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'place_details_screen.dart';
 import 'settings_screen.dart';
-import 'loading_screen.dart';
-// Make sure to import your LoadingScreen
+import 'loading_screen.dart'; // Make sure to import your LoadingScreen
 
 class ExploreScreen extends StatefulWidget {
   @override
@@ -177,12 +176,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _buildFilterChip(context, 'Region'),
-                SizedBox(width: 10),
-                _buildFilterChip(context, 'Accessibility'),
-                SizedBox(width: 10),
-                _buildFilterChip(context, 'Landscape'),
+                Flexible(
+                  child: _buildFilterButton(context, 'Region'),
+                ),
+                SizedBox(width: 8),
+                Flexible(
+                  child: _buildFilterButton(context, 'Accessibility'),
+                ),
+                SizedBox(width: 8),
+                Flexible(
+                  child: _buildFilterButton(context, 'Landscape'),
+                ),
               ],
             ),
           ),
@@ -212,17 +218,37 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget _buildFilterChip(BuildContext context, String label) {
-    return FilterChip(
-      label: Text(label),
-      onSelected: (bool selected) {
+  Widget _buildFilterButton(BuildContext context, String label) {
+    return OutlinedButton(
+      onPressed: () {
         if (label == 'Region') {
           _showRegionFilter(context);
         }
         // Implement other filters similarly
       },
-      selected: label == 'Region' && _selectedRegion != null,
-      selectedColor: Colors.teal[100],
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        side: BorderSide(color: Color(0xFF5CAFA5)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Color(0xFF5CAFA5),
+              fontSize: 14,
+            ),
+          ),
+          Icon(
+            Icons.arrow_drop_down,
+            color: Color(0xFF5CAFA5),
+          ),
+        ],
+      ),
     );
   }
 
