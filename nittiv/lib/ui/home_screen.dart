@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'loading_screen.dart'; // Import the LoadingScreen
 import 'explore_screen.dart';
 import 'saved_screen.dart';
 import 'journal_screen.dart';
@@ -16,7 +19,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-
+  String _userFirstName = '';
+  String _userEmail = '';
   final List<Widget> _screens = [
     HomeContent(),
     ExploreScreen(),
@@ -25,10 +29,40 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfileScreen(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _userEmail = user.email!;
+      DocumentSnapshot userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_userEmail)
+          .get();
+      if (userData.exists) {
+        setState(() {
+          _userFirstName = userData['userFirstName'];
+        });
+      } else {
+        print("User data does not exist");
+      }
+    }
+  }
+
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  void _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoadingScreen()));
   }
 
   @override
@@ -66,9 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       Text(
-                        'Alexandra',
+                        _userFirstName,
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                           color: Color(0xFF008575),
                           fontWeight: FontWeight.bold,
                         ),
@@ -78,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(width: 10),
                 CircleAvatar(
-                  backgroundImage: AssetImage('assets/profile_image.jpg'),
+                  backgroundImage:
+                      AssetImage('assets/images/profile_image.jpg'),
                 ),
                 SizedBox(width: 10),
               ],
@@ -113,9 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Sign Out'),
-              onTap: () {
-                // Implement sign-out functionality
-              },
+              onTap: _signOut,
             ),
           ],
         ),
@@ -176,17 +209,23 @@ class HomeContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Your Dream Trip Awaits',
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                  Row(
+                    children: [
+                      Icon(Icons.flight_takeoff, color: Colors.black),
+                      SizedBox(width: 10),
+                      Text(
+                        'Your Dream Trip Awaits',
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 10),
                   Text(
                     'Find Your Perfect Destination Based on Your Preferences!',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: TextStyle(fontSize: 16, color: Colors.black),
                   ),
                   SizedBox(height: 15),
                   ElevatedButton(
@@ -214,14 +253,22 @@ class HomeContent extends StatelessWidget {
             SizedBox(height: 30),
             Text(
               'Popular Destinations',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF008575),
+              ),
             ),
             SizedBox(height: 10),
             _buildPlacesList(0),
             SizedBox(height: 30),
             Text(
               'Suggested for You',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF008575),
+              ),
             ),
             SizedBox(height: 10),
             _buildPlacesList(1),
@@ -255,53 +302,48 @@ class HomeContent extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                     width: 150,
                     margin: EdgeInsets.only(right: 15),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.teal[300]!, width: 2),
+                      border: Border.all(
+                        color: Color(0xFF008575),
+                        width: 2,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8),
-                          ),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(8.0)),
                           child: Image.asset(
                             place['imagePath'],
-                            height: 120,
+                            height: 100,
                             width: 150,
                             fit: BoxFit.cover,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                place['name'],
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                place['location'],
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                          child: Text(
+                            place['name'],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Color(0xFF008575)),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            place['location'],
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black45),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -311,9 +353,9 @@ class HomeContent extends StatelessWidget {
               },
             );
           } else if (snapshot.hasError) {
-            return Text('Error loading data');
+            return Center(child: Text('Error loading places.'));
           } else {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
