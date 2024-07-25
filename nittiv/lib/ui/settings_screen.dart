@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'loading_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -34,16 +33,6 @@ class SettingsScreen extends StatelessWidget {
               title: Text('User Guide'),
               onTap: () =>
                   _showMarkdownDialog(context, 'User Guide', _userGuideText),
-            ),
-            ListTile(
-              title: Text('Sign Out'),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoadingScreen()),
-                  (Route<dynamic> route) => false,
-                );
-              },
             ),
           ],
         ),

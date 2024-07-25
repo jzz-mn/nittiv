@@ -285,11 +285,12 @@ class HomeContent extends StatelessWidget {
         future: _loadPlaceData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            var places = snapshot.data![categoryIndex]['places'];
             return ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data![categoryIndex]['places'].length,
+              itemCount: places.length,
               itemBuilder: (context, index) {
-                var place = snapshot.data![categoryIndex]['places'][index];
+                var place = places[index];
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -302,9 +303,7 @@ class HomeContent extends StatelessWidget {
                       ),
                     );
                   },
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                  child: Container(
                     width: 150,
                     margin: EdgeInsets.only(right: 15),
                     decoration: BoxDecoration(
@@ -332,9 +331,10 @@ class HomeContent extends StatelessWidget {
                           child: Text(
                             place['name'],
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                color: Color(0xFF008575)),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Color(0xFF008575),
+                            ),
                           ),
                         ),
                         Padding(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'settings_screen.dart';
 
 class JournalScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class _JournalScreenState extends State<JournalScreen> {
   final _descriptionController = TextEditingController();
   final _imageController = TextEditingController();
   int _selectedTabIndex = 0;
+  int _highlightedIndex = -1;
 
   void _addEntry() {
     final title = _titleController.text;
@@ -36,7 +38,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
   Widget _buildTabContent() {
     if (_selectedTabIndex == 0) {
-      return Center(child: Text('Calendar View'));
+      return _buildCalendarView();
     } else if (_selectedTabIndex == 1) {
       return Center(child: Text('Gallery View'));
     } else {
@@ -44,22 +46,166 @@ class _JournalScreenState extends State<JournalScreen> {
         itemCount: _entries.length,
         itemBuilder: (context, index) {
           final entry = _entries[index];
-          return ListTile(
-            leading: entry.imagePath.isNotEmpty
-                ? Image.asset(
-                    entry.imagePath,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  )
-                : null,
-            title: Text(entry.title),
-            subtitle: Text(
-                '${DateFormat.yMMMd().format(entry.date)}\n${entry.description}'),
+          return Container(
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding: EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              color:
+                  _highlightedIndex == index ? Color(0xFF008575) : Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                entry.imagePath.isNotEmpty
+                    ? Image.asset(
+                        entry.imagePath,
+                        width: 175,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      )
+                    : SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Placeholder(),
+                      ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Title: ${entry.title}',
+                        overflow: TextOverflow.visible,
+                        maxLines: null, // Remove line limit
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: _highlightedIndex == index
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Date: ${DateFormat.yMMMd().format(entry.date)}',
+                        overflow: TextOverflow.visible,
+                        maxLines: null, // Remove line limit
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _highlightedIndex == index
+                              ? Colors.white
+                              : Colors.grey[600],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Description: ${entry.description}',
+                        overflow: TextOverflow.visible,
+                        maxLines: null, // Remove line limit
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _highlightedIndex == index
+                              ? Colors.white
+                              : Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           );
         },
       );
     }
+  }
+
+  Widget _buildCalendarView() {
+    Map<DateTime, List<JournalEntry>> _groupedEntries = {};
+
+    for (var entry in _entries) {
+      if (_groupedEntries[entry.date] == null) {
+        _groupedEntries[entry.date] = [];
+      }
+      _groupedEntries[entry.date]!.add(entry);
+    }
+
+    return Column(
+      children: [
+        TableCalendar(
+          focusedDay: _selectedDate,
+          firstDay: DateTime.utc(2020, 1, 1),
+          lastDay: DateTime.utc(2100, 12, 31),
+          calendarFormat: CalendarFormat.month,
+          selectedDayPredicate: (day) {
+            return isSameDay(day, _selectedDate);
+          },
+          onDaySelected: (selectedDay, focusedDay) {
+            setState(() {
+              _selectedDate = selectedDay;
+            });
+          },
+          eventLoader: (day) {
+            return _groupedEntries[day] ?? [];
+          },
+          calendarStyle: CalendarStyle(
+            selectedDecoration: BoxDecoration(
+              color: Color.fromRGBO(0, 133, 117, 1),
+              shape: BoxShape.circle,
+            ),
+            todayDecoration: BoxDecoration(
+              color: Colors.blue,
+              shape: BoxShape.circle,
+            ),
+            markerDecoration: BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView(
+            children: _groupedEntries[_selectedDate] != null
+                ? _groupedEntries[_selectedDate]!.map((entry) {
+                    return ListTile(
+                      leading: entry.imagePath.isNotEmpty
+                          ? Image.asset(
+                              entry.imagePath,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            )
+                          : SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: Placeholder(),
+                            ),
+                      title:
+                          Text('Title: ${entry.title}'), // Removed truncation
+                      subtitle: Text(
+                          'Date: ${DateFormat.yMMMd().format(entry.date)}'),
+                      onTap: () {
+                        setState(() {
+                          _selectedTabIndex = 2;
+                          _highlightedIndex = _entries.indexOf(entry);
+                        });
+                      },
+                    );
+                  }).toList()
+                : [Center(child: Text('No entries for selected date'))],
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -213,47 +359,53 @@ class _JournalScreenState extends State<JournalScreen> {
             ),
           ),
           Expanded(child: _buildTabContent()),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Add Journal Entry'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            controller: _titleController,
-                            decoration: InputDecoration(labelText: 'Title'),
-                          ),
-                          TextField(
-                            controller: _descriptionController,
-                            decoration:
-                                InputDecoration(labelText: 'Description'),
-                          ),
-                          TextField(
-                            controller: _imageController,
-                            decoration:
-                                InputDecoration(labelText: 'Image Path'),
-                          ),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: _addEntry,
-                            child: Text('Add Entry'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Text('Add Journal Entry'),
-            ),
-          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _titleController.clear();
+          _descriptionController.clear();
+          _imageController.clear();
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            builder: (context) {
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _titleController,
+                          decoration: InputDecoration(labelText: 'Title'),
+                        ),
+                        TextField(
+                          controller: _descriptionController,
+                          decoration: InputDecoration(labelText: 'Description'),
+                        ),
+                        TextField(
+                          controller: _imageController,
+                          decoration: InputDecoration(labelText: 'Image Path'),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: _addEntry,
+                          child: Text('Add Entry'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Color(0xFF008575),
       ),
     );
   }
