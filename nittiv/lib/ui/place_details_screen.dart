@@ -98,13 +98,20 @@ class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Icon(Icons.location_on,
-                                    color: Color(0xFF008575)),
-                                SizedBox(width: 4),
-                                Text(placeInfo!['location']),
-                              ],
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Icon(Icons.location_on,
+                                      color: Color(0xFF008575)),
+                                  SizedBox(width: 4),
+                                  Flexible(
+                                    child: Text(
+                                      placeInfo!['location'],
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                             _buildSaveButton(),
                           ],
