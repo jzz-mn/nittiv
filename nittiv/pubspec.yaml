@@ -95,6 +95,10 @@ flutter:
      - assets/places/subic.jpg
      - assets/places/taal.jpg
      - assets/places/vigan.jpg
+     - assets/places/puerto.jpeg
+     - assets/places/tubbataha.jpg
+     - assets/places/white.jpg
+     - assets/places/mayon.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

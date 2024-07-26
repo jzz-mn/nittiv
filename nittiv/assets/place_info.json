@@ -138,5 +138,55 @@
         "imagePath": "assets/places/ek.jpg"
       }
     ]
+  },
+  {
+    "region": "Region IV-B - MIMAROPA",
+    "places": [
+      {
+        "name": "Puerto Princesa Underground River",
+        "description": "The Puerto Princesa Subterranean River National Park (PPSRNP) is one of the most important protected areas of the Philippines. The lower half of the river is brackish and is affected by the ocean’s tide. An underground river directly flowing into the sea, and the associated tidal influence, makes it a significant natural phenomenon. The discovery of at least 11 minerals, crystal and egg shape rock formations, and a 20 million year old Miocene age serenia fossil in the cave further add to its scientific value. The Puerto Princesa Underground River is declared as one of the New 7 Wonders of Nature.",
+        "location": "Puerto Princesa, Palawan, Philippines.",
+        "coordinates": "10.1920° N, 118.9260° E",
+        "highlight": "A spectacular limestone or karst landscape with one of the most complex cave systems. It contains an 8.2 km long underground river that flow directly to the sea.",
+        "recommendedVisitTime": "Dry season (November to May) for better weather conditions.",
+        "travelerTips": "Light casual wear is always practical when touring around the city. During rainy days (July to September) or when visiting mountainous areas where nights can be cool and chilly, it’s advisable to bring warm garments. In the hot summer months (March to May), it is best to wear a hat, a pair of sunglasses, and sunscreen to protect yourself from the sun. When visiting remote and forested areas, carry insect repellent, bottled water, and a flashlight. Expect to get wet on your trip to the Underground River, so wear shorts and sandals. Don’t forget to bring a camera to capture the sights!",
+        "imagePath": "assets/places/puerto.jpeg"
+      },
+      {
+        "name": "Tubbataha Reefs Natural Park",
+        "description": "The Tubbataha Reef Marine Park covers 96,828 ha, including the North and South Atolls and the Jessie Beazley Reef. It is a unique example of an atoll reef with a very high density of marine species; the North Islet serving as a nesting site for birds and marine turtles. The site is an excellent example of a pristine coral reef with a spectacular 100-m perpendicular wall, extensive lagoons and two coral islands.",
+        "location": "Sulu Sea, Palawan, Philippines.",
+        "coordinates": "8.9585° N, 119.8857° E",
+        "highlight": "Tubbataha Reefs Natural Park is a marine protected area and world-renowned scuba diving site. It is home to more than 1,200 marine species, including sea grasses and algae, corals, sharks, rays, fishes, sea turtles, seabirds and marine mammals.",
+        "recommendedVisitTime": "Due to its remote location, Tubbaataha Reef can only be accessed by liveaboard, with the dive season running from mid-March to mid-June.",
+        "travelerTips": "Plan your trip through a liveaboard diving operator. Ensure you have proper diving certification and experience for the best and safest experience.",
+        "imagePath": "assets/places/tubbataha.jpg"
+      },
+      {
+        "name": "White Beach, Puerto Galera",
+        "description": "White Beach in Puerto Galera is a popular destination known for its fine white sands, clear blue waters, and vibrant nightlife. This beach is a favorite among locals and tourists alike, offering a perfect mix of relaxation and adventure. During the day, visitors can enjoy various water sports such as snorkeling, jet-skiing, and banana boat rides. As the sun sets, the beach transforms into a lively hub with beachside bars, restaurants, and nightclubs providing entertainment late into the night. Puerto Galera itself is rich in marine biodiversity and is a designated UNESCO Man and Biosphere Reserve, making it an excellent spot for diving and snorkeling enthusiasts.",
+        "location": "Puerto Galera, Oriental Mindoro, Philippines.",
+        "coordinates": "13.5022° N, 120.9496° E",
+        "highlight": "It is a long stretch of white sand and crystal blue water that is great for swimming and other water sports like jet skiing, kayaking, and banana boat rides.",
+        "recommendedVisitTime": "Dry season (November to May) for the best beach experience.",
+        "travelerTips": "Take sea-sickness pills before the boat trip to Puerto Galera..  Wear a rashguard and aqua shoes when swimming and snorkeling to avoid being stung by sea urchins, jellyfish, or stonefish. Do not step on or touch corals while snorkeling. Never leave your trash nor collect plants or sand. Bring a dry bag to protect your cameras and a waterproof pouch for your phone, or even better, bring an underwater camera or action camera for snorkeling and other water sports. ",
+        "imagePath": "assets/places/white.jpg"
+      }
+    ]
+  },
+  {
+    "region": "Region V - BICOL REGION",
+    "places": [
+      {
+        "name": "Mayon Volcano",
+        "description": " Mayon Volcano is 2462 meters tall and is situated in Albay, Bicol, on Luzon's southeast coast. It is also considered to be the most active volcano in the Philippines, having erupted around 50 times over the last several decades.",
+        "location": "Albay, Philippines.",
+        "coordinates": "13.2572° N, 123.6852° E",
+        "highlight": "Mayon is a classic stratovolcano with a small central summit crater. It is one of the world's most symmetrical volcanic cones. The concave profile, a hyperbolic sine curve of the volcano is due to the balance between erosion and eruption, defined by the angle of repose of ash.",
+        "recommendedVisitTime": "A city called Legazpi is the main destination for people who want to see Mayon Volcano. It is best to visit during the dry months of March through May. There will be a lot of rain from July to September.",
+        "travelerTips": "When visiting Mayon Volcano, it's essential to prepare for an enjoyable and safe trip. Before your trip, check the weather forecast and any advisories on volcanic activity, as Mayon is an active volcano, and safety is paramount. For the best experience and to ensure safety, hire a local guide who can provide valuable insights and navigate the safest routes. Wear comfortable and breathable clothing, and sturdy hiking shoes for the trek. Bring a hat, sunglasses, and sunscreen to protect yourself from the sun, and carry a rain jacket in case of sudden showers. Don't forget to pack enough water and snacks to stay hydrated and energized during your hike. Respect local regulations and avoid restricted areas for your safety.",
+        "imagePath": "assets/places/mayon.jpg"
+      }
+    ]
   }
 ]
