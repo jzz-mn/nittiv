@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'signup_screen.dart';
 import 'home_screen.dart';
 
@@ -16,29 +15,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-
-  Future<void> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return;
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google Sign-In failed. Please try again.')),
-      );
-    }
-  }
 
   void _showHelpDialog() {
     showDialog(
@@ -99,6 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email), // Add this line
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -125,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         });
                       },
                     ),
+                    prefixIcon: Icon(Icons.lock), // Add this line
                   ),
                   obscureText: _obscurePassword,
                   validator: (value) {
@@ -175,18 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF008575),
                     padding: EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: signInWithGoogle,
-                  icon: Image.asset('assets/logos/google.png', height: 24),
-                  label: Text('Sign in with Google'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    side: BorderSide(color: Colors.grey),
-                    padding: EdgeInsets.symmetric(vertical: 12),
                   ),
                 ),
                 SizedBox(height: 16),

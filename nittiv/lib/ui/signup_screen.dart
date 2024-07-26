@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'home_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -17,29 +16,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final _lastNameController = TextEditingController();
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
-
-  Future<void> signUpWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return;
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google Sign-Up failed. Please try again.')),
-      );
-    }
-  }
 
   void _showHelpDialog() {
     showDialog(
@@ -120,7 +96,10 @@ class _SignupScreenState extends State<SignupScreen> {
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
-                    labelText: 'Email', border: OutlineInputBorder()),
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email), // Add icon here
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
@@ -132,7 +111,10 @@ class _SignupScreenState extends State<SignupScreen> {
               TextFormField(
                 controller: _firstNameController,
                 decoration: InputDecoration(
-                    labelText: 'First Name', border: OutlineInputBorder()),
+                  labelText: 'First Name',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person), // Add icon here
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your first name';
@@ -144,7 +126,10 @@ class _SignupScreenState extends State<SignupScreen> {
               TextFormField(
                 controller: _lastNameController,
                 decoration: InputDecoration(
-                    labelText: 'Last Name', border: OutlineInputBorder()),
+                  labelText: 'Last Name',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person), // Add icon here
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your last name';
@@ -158,6 +143,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock), // Add icon here
                   suffixIcon: IconButton(
                     icon: Icon(
                       _passwordVisible
@@ -180,6 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 decoration: InputDecoration(
                   labelText: 'Confirm Password',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock), // Add icon here
                   suffixIcon: IconButton(
                     icon: Icon(
                       _confirmPasswordVisible
@@ -244,18 +231,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF008575),
                   padding: EdgeInsets.symmetric(vertical: 16),
-                ),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: signUpWithGoogle,
-                icon: Image.asset('assets/logos/google.png', height: 24),
-                label: Text('Sign up with Google'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  side: BorderSide(color: Colors.grey),
-                  padding: EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
               SizedBox(height: 10),
