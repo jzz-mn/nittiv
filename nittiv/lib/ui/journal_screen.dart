@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'loading_screen.dart';
 import 'settings_screen.dart';
+import 'entries_manager.dart';
 
 class JournalScreen extends StatefulWidget {
   @override
@@ -10,130 +12,78 @@ class JournalScreen extends StatefulWidget {
 }
 
 class _JournalScreenState extends State<JournalScreen> {
-  final _entries = <JournalEntry>[];
+  final EntriesManager _entriesManager = EntriesManager();
   DateTime _selectedDate = DateTime.now();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _imageController = TextEditingController();
+  List<Map<String, dynamic>> _places = [];
+  Map<String, dynamic>? _selectedPlace;
   int _selectedTabIndex = 0;
   int _highlightedIndex = -1;
 
-  void _addEntry() {
+  @override
+  void initState() {
+    super.initState();
+    _loadPlaces();
+    _entriesManager.loadEntries().then((_) {
+      setState(() {});
+    });
+  }
+
+  void _loadPlaces() async {
+    String data = await DefaultAssetBundle.of(context)
+        .loadString('assets/place_info.json');
+    final jsonResult = json.decode(data);
+    final List<Map<String, dynamic>> places = [];
+    for (var region in jsonResult) {
+      for (var place in region['places']) {
+        places.add(place);
+      }
+    }
+    setState(() {
+      _places = places;
+    });
+  }
+
+  Future<void> _addEntry() async {
     final title = _titleController.text;
     final description = _descriptionController.text;
-    final imagePath = _imageController.text;
+    final placeName = _selectedPlace?['name'] ?? '';
+    final imagePath = _selectedPlace?['imagePath'] ?? '';
 
-    if (title.isEmpty || description.isEmpty || imagePath.isEmpty) return;
+    if (title.isEmpty || description.isEmpty || placeName.isEmpty) return;
 
-    setState(() {
-      _entries.add(JournalEntry(
-        date: _selectedDate,
-        title: title,
-        description: description,
-        imagePath: imagePath,
-      ));
-    });
+    final newEntry = JournalEntry(
+      title: title,
+      description: description,
+      placeName: placeName,
+      date: _selectedDate,
+      images: [imagePath],
+    );
+
+    await _entriesManager.addEntry(newEntry);
+    setState(() {});
 
     Navigator.pop(context);
+  }
+
+  Future<void> _deleteEntry(JournalEntry entry) async {
+    await _entriesManager.deleteEntry(entry);
+    setState(() {});
   }
 
   Widget _buildTabContent() {
     if (_selectedTabIndex == 0) {
       return _buildCalendarView();
-    } else if (_selectedTabIndex == 1) {
-      return Center(child: Text('Gallery View'));
     } else {
-      return ListView.builder(
-        itemCount: _entries.length,
-        itemBuilder: (context, index) {
-          final entry = _entries[index];
-          return Container(
-            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            padding: EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-              color:
-                  _highlightedIndex == index ? Color(0xFF008575) : Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                entry.imagePath.isNotEmpty
-                    ? Image.asset(
-                        entry.imagePath,
-                        width: 175,
-                        height: 150,
-                        fit: BoxFit.cover,
-                      )
-                    : SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: Placeholder(),
-                      ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Title: ${entry.title}',
-                        overflow: TextOverflow.visible,
-                        maxLines: null, // Remove line limit
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: _highlightedIndex == index
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Date: ${DateFormat.yMMMd().format(entry.date)}',
-                        overflow: TextOverflow.visible,
-                        maxLines: null, // Remove line limit
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: _highlightedIndex == index
-                              ? Colors.white
-                              : Colors.grey[600],
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Description: ${entry.description}',
-                        overflow: TextOverflow.visible,
-                        maxLines: null, // Remove line limit
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: _highlightedIndex == index
-                              ? Colors.white
-                              : Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      );
+      return _buildEntriesView();
     }
   }
 
   Widget _buildCalendarView() {
     Map<DateTime, List<JournalEntry>> _groupedEntries = {};
 
-    for (var entry in _entries) {
+    for (var entry in _entriesManager.getEntries()) {
       if (_groupedEntries[entry.date] == null) {
         _groupedEntries[entry.date] = [];
       }
@@ -160,7 +110,7 @@ class _JournalScreenState extends State<JournalScreen> {
           },
           calendarStyle: CalendarStyle(
             selectedDecoration: BoxDecoration(
-              color: Color.fromRGBO(0, 133, 117, 1),
+              color: Color(0xFF008575),
               shape: BoxShape.circle,
             ),
             todayDecoration: BoxDecoration(
@@ -177,35 +127,168 @@ class _JournalScreenState extends State<JournalScreen> {
           child: ListView(
             children: _groupedEntries[_selectedDate] != null
                 ? _groupedEntries[_selectedDate]!.map((entry) {
-                    return ListTile(
-                      leading: entry.imagePath.isNotEmpty
-                          ? Image.asset(
-                              entry.imagePath,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                            )
-                          : SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: Placeholder(),
-                            ),
-                      title:
-                          Text('Title: ${entry.title}'), // Removed truncation
-                      subtitle: Text(
-                          'Date: ${DateFormat.yMMMd().format(entry.date)}'),
-                      onTap: () {
-                        setState(() {
-                          _selectedTabIndex = 2;
-                          _highlightedIndex = _entries.indexOf(entry);
-                        });
+                    return Dismissible(
+                      key: UniqueKey(),
+                      background: Container(
+                        color: Colors.red,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 16.0),
+                            child: Icon(Icons.delete, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      direction: DismissDirection.endToStart,
+                      onDismissed: (direction) async {
+                        await _deleteEntry(entry);
                       },
+                      child: ListTile(
+                        leading: entry.images.isNotEmpty
+                            ? Image.asset(
+                                entry.images[0],
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              )
+                            : SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Placeholder(),
+                              ),
+                        title: Text('Title: ${entry.title}'),
+                        subtitle: Text(
+                            'Date: ${DateFormat.yMMMd().format(entry.date)}'),
+                        onTap: () {
+                          setState(() {
+                            _selectedTabIndex = 1;
+                            _highlightedIndex =
+                                _entriesManager.getEntries().indexOf(entry);
+                          });
+                        },
+                      ),
                     );
                   }).toList()
                 : [Center(child: Text('No entries for selected date'))],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildEntriesView() {
+    return ListView.builder(
+      itemCount: _entriesManager.getEntries().length,
+      itemBuilder: (context, index) {
+        final entry = _entriesManager.getEntries()[index];
+        return Dismissible(
+          key: UniqueKey(),
+          background: Container(
+            color: Colors.red,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: EdgeInsets.only(right: 16.0),
+                child: Icon(Icons.delete, color: Colors.white),
+              ),
+            ),
+          ),
+          direction: DismissDirection.endToStart,
+          onDismissed: (direction) {
+            _deleteEntry(entry);
+          },
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            padding: EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              color:
+                  _highlightedIndex == index ? Color(0xFF008575) : Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                entry.images.isNotEmpty
+                    ? Image.asset(
+                        entry.images[0],
+                        width: 175,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      )
+                    : SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Placeholder(),
+                      ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Title: ${entry.title}',
+                        overflow: TextOverflow.visible,
+                        maxLines: null,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: _highlightedIndex == index
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Date: ${DateFormat.yMMMd().format(entry.date)}',
+                        overflow: TextOverflow.visible,
+                        maxLines: null,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _highlightedIndex == index
+                              ? Colors.white
+                              : Colors.grey[600],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Place: ${entry.placeName}',
+                        overflow: TextOverflow.visible,
+                        maxLines: null,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _highlightedIndex == index
+                              ? Colors.white
+                              : Colors.grey[600],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Description: ${entry.description}',
+                        overflow: TextOverflow.visible,
+                        maxLines: null,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _highlightedIndex == index
+                              ? Colors.white
+                              : Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -284,115 +367,115 @@ class _JournalScreenState extends State<JournalScreen> {
                   label: Text(
                     'Calendar',
                     style: TextStyle(
-                      color: Color(0xFF5CAFA5),
+                      color: _selectedTabIndex == 0
+                          ? Colors.white
+                          : Color(0xFF5CAFA5),
                     ),
                   ),
                   selected: _selectedTabIndex == 0,
+                  selectedColor: Color(0xFF008575),
                   onSelected: (selected) {
                     setState(() {
                       _selectedTabIndex = 0;
                     });
                   },
-                  side: BorderSide(color: Color(0xFF5CAFA5)),
                 ),
                 SizedBox(width: 10),
                 ChoiceChip(
                   label: Text(
-                    'Gallery',
+                    'Entries',
                     style: TextStyle(
-                      color: Color(0xFF5CAFA5),
+                      color: _selectedTabIndex == 1
+                          ? Colors.white
+                          : Color(0xFF5CAFA5),
                     ),
                   ),
                   selected: _selectedTabIndex == 1,
+                  selectedColor: Color(0xFF008575),
                   onSelected: (selected) {
                     setState(() {
                       _selectedTabIndex = 1;
+                      _highlightedIndex = -1;
                     });
                   },
-                  side: BorderSide(color: Color(0xFF5CAFA5)),
-                ),
-                SizedBox(width: 10),
-                ChoiceChip(
-                  label: Text(
-                    'List',
-                    style: TextStyle(
-                      color: Color(0xFF5CAFA5),
-                    ),
-                  ),
-                  selected: _selectedTabIndex == 2,
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedTabIndex = 2;
-                    });
-                  },
-                  side: BorderSide(color: Color(0xFF5CAFA5)),
                 ),
               ],
             ),
           ),
-          Expanded(child: _buildTabContent()),
+          Expanded(
+            child: _buildTabContent(),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFF008575),
         onPressed: () {
           _titleController.clear();
           _descriptionController.clear();
-          _imageController.clear();
-          showModalBottomSheet(
+          _selectedPlace = null;
+          showDialog(
             context: context,
-            isScrollControlled: true,
             builder: (context) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _titleController,
-                          decoration: InputDecoration(labelText: 'Title'),
-                        ),
-                        TextField(
-                          controller: _descriptionController,
-                          decoration: InputDecoration(labelText: 'Description'),
-                        ),
-                        TextField(
-                          controller: _imageController,
-                          decoration: InputDecoration(labelText: 'Image Path'),
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: _addEntry,
-                          child: Text('Add Entry'),
-                        ),
-                      ],
-                    ),
+              return AlertDialog(
+                title: Text('Add Entry'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _titleController,
+                        decoration: InputDecoration(labelText: 'Title'),
+                      ),
+                      TextField(
+                        controller: _descriptionController,
+                        decoration: InputDecoration(labelText: 'Description'),
+                      ),
+                      DropdownButtonFormField<Map<String, dynamic>>(
+                        value: _selectedPlace,
+                        decoration: InputDecoration(labelText: 'Select Place'),
+                        items: _places
+                            .map((place) => DropdownMenuItem(
+                                  value: place,
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        place['imagePath'],
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(place['name']),
+                                    ],
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedPlace = value;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
+                actions: [
+                  TextButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Add'),
+                    onPressed: _addEntry,
+                  ),
+                ],
               );
             },
           );
         },
         child: Icon(Icons.add),
-        backgroundColor: Color(0xFF008575),
       ),
     );
   }
-}
-
-class JournalEntry {
-  final DateTime date;
-  final String title;
-  final String description;
-  final String imagePath;
-
-  JournalEntry({
-    required this.date,
-    required this.title,
-    required this.description,
-    required this.imagePath,
-  });
 }
