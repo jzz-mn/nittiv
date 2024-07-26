@@ -101,27 +101,32 @@ class _SavedScreenState extends State<SavedScreen> {
               itemCount: _savedPlaces.length,
               itemBuilder: (context, index) {
                 final place = _savedPlaces[index];
-                return ListTile(
-                  leading: Image.asset(
-                    place['imagePath'],
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  title: Text(place['name']),
-                  subtitle: Text(place['location']),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PlaceDetailsScreen(
-                          placeName: place['name'],
-                          imagePath: place['imagePath'],
+                return Card(
+                  margin: EdgeInsets.all(8.0),
+                  elevation: 4,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(8.0),
+                    leading: Image.asset(
+                      place['imagePath'],
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    title: Text(place['name']),
+                    subtitle: Text(place['location']),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PlaceDetailsScreen(
+                            placeName: place['name'],
+                            imagePath: place['imagePath'],
+                          ),
                         ),
-                      ),
-                    ).then((_) =>
-                        loadSavedPlaces()); // Reload saved places when returning from details screen
-                  },
+                      ).then((_) =>
+                          loadSavedPlaces()); // Reload saved places when returning from details screen
+                    },
+                  ),
                 );
               },
             ),
