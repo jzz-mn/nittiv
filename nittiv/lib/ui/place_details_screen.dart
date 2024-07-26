@@ -77,7 +77,7 @@ class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
                     height: 300,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage(placeInfo!['imagePath']),
+                        image: AssetImage(widget.imagePath),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -117,33 +117,29 @@ class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
                           ],
                         ),
                         SizedBox(height: 16),
-                        Text(
-                          'About',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          placeInfo!['description'],
-                          style: TextStyle(fontSize: 16),
+                        _buildInfoSection(
+                          icon: Icons.info,
+                          title: 'About',
+                          content: placeInfo!['description'],
                         ),
                         SizedBox(height: 16),
-                        Text(
-                          'Highlight',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          placeInfo!['highlight'],
-                          style: TextStyle(fontSize: 16),
+                        _buildInfoSection(
+                          icon: Icons.star,
+                          title: 'Highlight',
+                          content: placeInfo!['highlight'],
                         ),
                         SizedBox(height: 16),
-                        _buildInfoCard('Best Time to Visit',
-                            placeInfo!['recommendedVisitTime']),
+                        _buildInfoCard(
+                          icon: Icons.calendar_today,
+                          title: 'Best Time to Visit',
+                          content: placeInfo!['recommendedVisitTime'],
+                        ),
                         SizedBox(height: 8),
                         _buildInfoCard(
-                            'Traveler Tips', placeInfo!['travelerTips']),
+                          icon: Icons.tips_and_updates,
+                          title: 'Traveler Tips',
+                          content: placeInfo!['travelerTips'],
+                        ),
                       ],
                     ),
                   ),
@@ -176,7 +172,36 @@ class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
     );
   }
 
-  Widget _buildInfoCard(String title, String info) {
+  Widget _buildInfoSection(
+      {required IconData icon,
+      required String title,
+      required String content}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: Color(0xFF008575)),
+            SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        SizedBox(height: 8),
+        Text(
+          content,
+          style: TextStyle(fontSize: 16),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoCard(
+      {required IconData icon,
+      required String title,
+      required String content}) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -184,10 +209,18 @@ class _PlaceDetailsScreenState extends State<PlaceDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                Icon(icon, color: Color(0xFF008575)),
+                SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
             SizedBox(height: 8),
-            Text(info, style: TextStyle(fontSize: 16)),
+            Text(content, style: TextStyle(fontSize: 16)),
           ],
         ),
       ),
