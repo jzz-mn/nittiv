@@ -58,8 +58,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              leading: Icon(Icons.settings, color: Color(0xFF008575)),
+              title:
+                  Text('Settings', style: TextStyle(color: Color(0xFF008575))),
               onTap: () {
                 Navigator.push(
                   context,
@@ -68,8 +69,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Sign Out'),
+              leading: Icon(Icons.logout, color: Color(0xFF008575)),
+              title:
+                  Text('Sign Out', style: TextStyle(color: Color(0xFF008575))),
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,

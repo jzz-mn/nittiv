@@ -1,17 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'settings_screen.dart'; // Assuming you've created a new file for SettingsScreen
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  User? user;
+  String profilePictureUrl = '';
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    user = _auth.currentUser;
+    if (user != null) {
+      emailController.text = user!.email ?? '';
+      try {
+        profilePictureUrl = await _storage
+            .ref('profile_pictures/${user!.uid}.jpg')
+            .getDownloadURL();
+      } catch (e) {
+        print("No profile picture found: $e");
+        profilePictureUrl = '';
+      }
+      setState(() {});
+    }
+  }
+
+  Future<void> _updatePassword() async {
+    if (user != null && passwordController.text.isNotEmpty) {
+      try {
+        await user!.updatePassword(passwordController.text);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Password updated successfully"),
+        ));
+        passwordController.clear();
+      } catch (e) {
+        print("Error updating password: $e");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Error updating password: ${e.toString()}"),
+        ));
+      }
+    }
+  }
+
+  Future<void> _confirmAndUpdate() async {
+    bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Update"),
+          content: Text(
+              "Only password can be updated. To update your email, please contact support-ph@nittiv.com.\n\nDo you want to update your password?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            TextButton(
+              child: Text("Update Password"),
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await _updatePassword();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Dummy data for profile details
-    final String profilePicture = 'assets/profile_image.jpg';
-    final String name = 'Alexandra';
-    final String lastName = 'Saint Mleux';
-    final String birthdate = 'January 1, 2000';
-    final String location = 'Manila, Philippines';
-    final List<String> interests = ['Hiking', 'Swimming'];
-    final List<String> badges = ['Traveler', 'Volunteer'];
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -21,12 +94,6 @@ class ProfileScreen extends StatelessWidget {
             fontWeight: FontWeight.w200,
           ),
         ),
-        actions: [
-          CircleAvatar(
-            backgroundImage: AssetImage(profilePicture),
-          ),
-          SizedBox(width: 10),
-        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -49,7 +116,11 @@ class ProfileScreen extends StatelessWidget {
               title:
                   Text('Settings', style: TextStyle(color: Color(0xFF008575))),
               onTap: () {
-                // Navigate to settings screen
+                Navigator.pop(context); // Close the drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsScreen()),
+                );
               },
             ),
             ListTile(
@@ -57,7 +128,8 @@ class ProfileScreen extends StatelessWidget {
               title:
                   Text('Sign Out', style: TextStyle(color: Color(0xFF008575))),
               onTap: () {
-                // Implement sign-out functionality
+                _auth.signOut();
+                Navigator.of(context).pushReplacementNamed('/login');
               },
             ),
           ],
@@ -68,46 +140,58 @@ class ProfileScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Center(
-                  child: Container(
-                    width: 182,
-                    height: 182,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xFF008575),
-                        width: 5.35,
-                      ),
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(profilePicture),
-                        fit: BoxFit.cover,
-                      ),
+                Container(
+                  width: 182,
+                  height: 182,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Color(0xFF008575),
+                      width: 5.35,
+                    ),
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/profile_image.jpg'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
+                SizedBox(height: 24),
+                ProfileBox(
+                  label: 'Email:',
+                  value: emailController.text,
+                  isEditable: false,
+                ),
                 SizedBox(height: 16),
-                Center(
-                  child: Text(
-                    '$name $lastName',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                ProfileBox(
+                  label: 'Password:',
+                  value: '********',
+                  isEditable: true,
+                  controller: passwordController,
+                  obscureText: _obscurePassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Color(0xFF008575),
                     ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
                   ),
                 ),
-                SizedBox(height: 16),
-                ProfileBox(label: 'Birthdate:', value: birthdate),
-                ProfileBox(label: 'Location:', value: location),
-                ProfileBox(
-                  label: 'Interests:',
-                  value: '· ${interests[0]}\n· ${interests[1]}',
-                ),
-                ProfileBox(
-                  label: 'Badges:',
-                  value: '· ${badges[0]}\n· ${badges[1]}',
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: _confirmAndUpdate,
+                  child: Text('UPDATE', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF008575),
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  ),
                 ),
               ],
             ),
@@ -121,49 +205,62 @@ class ProfileScreen extends StatelessWidget {
 class ProfileBox extends StatelessWidget {
   final String label;
   final String value;
+  final bool isEditable;
+  final TextEditingController? controller;
+  final bool obscureText;
+  final Widget? suffixIcon;
 
-  ProfileBox({required this.label, required this.value});
+  ProfileBox({
+    required this.label,
+    required this.value,
+    this.isEditable = false,
+    this.controller,
+    this.obscureText = false,
+    this.suffixIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 102,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF008575),
-                fontSize: 18,
-              ),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF008575),
+            fontSize: 18,
           ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: Color(0xFF008575),
-                  width: 2.0,
+        ),
+        SizedBox(height: 8),
+        isEditable
+            ? TextField(
+                controller: controller,
+                obscureText: obscureText,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  suffixIcon: suffixIcon,
                 ),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF008575),
+              )
+            : Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: Color(0xFF008575),
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF008575),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 }
