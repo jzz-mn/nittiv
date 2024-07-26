@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'loading_screen.dart'; // Import the LoadingScreen
 import 'explore_screen.dart';
 import 'saved_screen.dart';
@@ -19,8 +18,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  String _userFirstName = '';
-  String _userEmail = '';
   final List<Widget> _screens = [
     HomeContent(),
     ExploreScreen(),
@@ -32,25 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
-  }
-
-  Future<void> _fetchUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      _userEmail = user.email!;
-      DocumentSnapshot userData = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_userEmail)
-          .get();
-      if (userData.exists) {
-        setState(() {
-          _userFirstName = userData['userFirstName'];
-        });
-      } else {
-        print("User data does not exist");
-      }
-    }
   }
 
   void _onTabTapped(int index) {
@@ -86,36 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               actions: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Hello,',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF008575),
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                      Text(
-                        _userFirstName,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF008575),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 10),
-                CircleAvatar(
-                  backgroundImage:
-                      AssetImage('assets/images/profile_image.jpg'),
-                ),
-                SizedBox(width: 10),
+                // No additional actions needed here
               ],
             )
           : null,

@@ -212,46 +212,12 @@ class _JournalScreenState extends State<JournalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Journal',
-              style: TextStyle(
-                color: Color(0xFF008575),
-                fontWeight: FontWeight.w200,
-              ),
-            ),
-            Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Hello,',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF008575),
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                    Text(
-                      'Alexandra',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Color(0xFF008575),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(width: 10),
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/profile_image.jpg'),
-                ),
-              ],
-            ),
-          ],
+        title: Text(
+          'Journal',
+          style: TextStyle(
+            color: Color(0xFF008575),
+            fontWeight: FontWeight.w200,
+          ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,

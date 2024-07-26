@@ -22,31 +22,6 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Hello,',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF008575),
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                Text(
-                  'Alexandra',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Color(0xFF008575),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: 10),
           CircleAvatar(
             backgroundImage: AssetImage(profilePicture),
           ),
