@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'loading_screen.dart';
 import 'settings_screen.dart';
 
 class JournalScreen extends StatefulWidget {
@@ -254,7 +255,11 @@ class _JournalScreenState extends State<JournalScreen> {
               title:
                   Text('Sign Out', style: TextStyle(color: Color(0xFF008575))),
               onTap: () {
-                // Implement sign-out functionality
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoadingScreen()),
+                  (Route<dynamic> route) => false,
+                );
               },
             ),
           ],

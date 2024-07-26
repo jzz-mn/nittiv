@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'loading_screen.dart';
 import 'place_details_screen.dart';
 import 'settings_screen.dart';
 import 'saved_places_manager.dart';
@@ -83,6 +84,11 @@ class _SavedScreenState extends State<SavedScreen> {
               title:
                   Text('Sign Out', style: TextStyle(color: Color(0xFF008575))),
               onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoadingScreen()),
+                  (Route<dynamic> route) => false,
+                );
                 // Implement sign-out functionality
               },
             ),

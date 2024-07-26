@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'loading_screen.dart';
 import 'settings_screen.dart'; // Assuming you've created a new file for SettingsScreen
 
 class ProfileScreen extends StatefulWidget {
@@ -62,8 +63,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Confirm Update"),
-          content: Text(
-              "Only password can be updated. To update your email, please contact support-ph@nittiv.com.\n\nDo you want to update your password?"),
+          content: RichText(
+            text: TextSpan(
+              text:
+                  "Only password can be updated. To update your email, please contact ",
+              style: TextStyle(color: Colors.black),
+              children: [
+                TextSpan(
+                  text: "support-ph@nittiv.com",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(text: ".\n\nDo you want to update your password?"),
+              ],
+            ),
+          ),
           actions: <Widget>[
             TextButton(
               child: Text("Cancel"),
@@ -81,6 +97,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (confirm == true) {
       await _updatePassword();
     }
+  }
+
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Need Help?"),
+          content: RichText(
+            text: TextSpan(
+              text:
+                  "If you have any questions or need assistance, please reach out to our support team at ",
+              style: TextStyle(color: Colors.black),
+              children: [
+                TextSpan(
+                  text: "support-ph@nittiv.com",
+                  style: TextStyle(color: Colors.blue),
+                ),
+                TextSpan(text: ". We're here to help!"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Close"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -128,8 +175,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title:
                   Text('Sign Out', style: TextStyle(color: Color(0xFF008575))),
               onTap: () {
-                _auth.signOut();
-                Navigator.of(context).pushReplacementNamed('/login');
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoadingScreen()),
+                  (Route<dynamic> route) => false,
+                );
               },
             ),
           ],
@@ -191,6 +241,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF008575),
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: _showHelpDialog,
+                    child: Text(
+                      'Need help?',
+                      style: TextStyle(
+                        color: Color(0xFF008575),
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
                   ),
                 ),
               ],
