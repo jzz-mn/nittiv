@@ -16,7 +16,6 @@
 - **Journal**: Document travel experiences with entries and photos.
 - **Profile Management**: Update personal information and preferences.
 - **Settings**: Access privacy settings, FAQs, and user guides.
-- **Offline Access**: Access saved places and journal entries without an internet connection.
 - **Sustainable Travel Tips**: In-app content promoting responsible tourism.
 
 ## Screens
@@ -40,7 +39,7 @@
 - Log travel experiences, add photos, and write notes.
 
 ### Profile Screen
-- Update personal information including profile picture and preferences.
+- Update password information.
 
 ### Settings Screen
 - Manage privacy settings, access FAQs, and user guides.
