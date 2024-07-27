@@ -1,6 +1,6 @@
 # Nittiv: Your Sustainable Travel Guide for Exploring the Philippines
 
-![Nittiv App](D:\Github\nittiv\nittiv\assets\images\Nittiv.png)
+![Nittiv App](nittiv/assets/images/Nittiv.png)
 
 ## Project Overview
 
