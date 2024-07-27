@@ -1,5 +1,7 @@
 # Nittiv: Your Sustainable Travel Guide for Exploring the Philippines
 
+![Nittiv App](assets/images/Nittiv.png)
+
 ## Project Overview
 
 **Nittiv** is a mobile application designed to enhance the travel experience by providing users with eco-friendly travel recommendations and tools to document their journeys. Built using Flutter, Nittiv focuses on promoting sustainable tourism in the Philippines by highlighting eco-friendly tourist spots and providing resources for responsible travel.
